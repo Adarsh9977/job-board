@@ -1,5 +1,6 @@
 export type JobType = {
   companyLogo: string;
+  companyBio: string;
   workMode: 'remote' | 'office' | 'hybrid';
   city: string;
   address: string;
@@ -12,9 +13,13 @@ export type JobType = {
   skills: string[];
   id: string;
   title: string;
+  expired: Boolean;
   description: string | null;
   companyName: string;
   postedAt: Date;
+  isVerifiedJob?: Boolean;
+  application?: string;
+  deleted?: Boolean;
 };
 export type getAllJobsAdditonalType = {
   jobs: JobType[];

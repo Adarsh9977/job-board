@@ -1,6 +1,10 @@
 import type { Config } from 'tailwindcss';
 const { fontFamily } = require('tailwindcss/defaultTheme');
+import plugin from 'tailwindcss/plugin';
 
+const {
+  default: flattenColorPalette,
+} = require('tailwindcss/lib/util/flattenColorPalette');
 const config = {
   darkMode: ['class'],
   content: [
@@ -97,8 +101,9 @@ const config = {
           to: { height: '0' },
         },
         scroll: {
-          '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-100%)' },
+          to: {
+            transform: 'translate(calc(-50% - 0.5rem))',
+          },
         },
         'loop-scroll': {
           from: { transform: 'translateX(0%)' },
@@ -110,12 +115,52 @@ const config = {
         'marquee-vertical': 'marquee-vertical var(--duration) linear infinite',
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        scroll: 'scroll 5s linear infinite',
+        scroll:
+          'scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite',
         'loop-scroll': 'loop-scroll 50s linear infinite',
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    addVariablesForColors,
+    plugin(({ addUtilities }) => {
+      addUtilities({
+        '.scrollbar-hide': {
+          '-ms-overflow-style': 'none',
+          'scrollbar-width': 'none',
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+        },
+        '.scrollbar-custom': {
+          '&::-webkit-scrollbar': {
+            width: '12px',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: '#1d2839', // Customize thumb color
+            borderRadius: '6px',
+            border: '3px solid transparent', // Add space around thumb
+            backgroundClip: 'content-box', // Adjust thumb size
+          },
+          '&::-webkit-scrollbar-track': {
+            background: 'transparent', // Hide track
+          },
+        },
+      });
+    }),
+  ],
 } satisfies Config;
 
 export default config;
+
+function addVariablesForColors({ addBase, theme }: any) {
+  let allColors = flattenColorPalette(theme('colors'));
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+
+  addBase({
+    ':root': newVars,
+  });
+}

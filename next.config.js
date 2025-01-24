@@ -1,3 +1,4 @@
+// next.config.js
 import { fileURLToPath } from 'node:url';
 import createJiti from 'jiti';
 
@@ -9,6 +10,7 @@ if (process.env.SKIP_ENV_CHECK !== 'true') {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   reactStrictMode: true,
   logging: {
     fetches: {
@@ -19,14 +21,22 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'job-board.b-cdn.net', // Change this to your CDN domain
+        hostname: 'job-board.b-cdn.net',
       },
       {
         protocol: 'https',
-        hostname: 'wwww.example.com',
+        hostname: 'lh3.googleusercontent.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'aakash2330.b-cdn.net',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.example.com',
+      }
     ],
   },
 };
 
-export default nextConfig; // ES module export
+export default nextConfig;

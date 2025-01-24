@@ -24,6 +24,7 @@ function salaryRangeQuery(salaryrange: JobQuerySchemaType['salaryrange']) {
   return query;
 }
 export function getJobFilters({
+  EmpType,
   workmode,
   city,
   salaryrange,
@@ -33,6 +34,7 @@ export function getJobFilters({
   limit,
 }: JobQuerySchemaType) {
   const filters = [
+    EmpType && { type: { in: EmpType } },
     workmode && { workMode: { in: workmode } },
     city && { city: { in: city } },
     salaryrange && { OR: salaryRangeQuery(salaryrange) },
@@ -58,13 +60,20 @@ export function getJobFilters({
       (filter) => filter !== undefined && filter !== null && filter !== ''
     ) as Prisma.JobWhereInput[],
   };
+
   const sortFieldMapping: { [key: string]: string } = {
     postedat: 'postedAt',
+    maxsalary: 'maxSalary',
   };
+
   const [sort, sortOrder] = sortby.split('_');
-  const orderBy: Prisma.JobOrderByWithAggregationInput = {
-    ...(sortby && { [sortFieldMapping[sort]]: sortOrder }),
-  };
+  const orderBy: Prisma.JobOrderByWithAggregationInput = sortby
+    ? {
+        [sortFieldMapping[sort]]:
+          sort === 'maxsalary' ? { sort: sortOrder, nulls: 'last' } : sortOrder,
+      }
+    : {};
+
   const pagination = {
     skip: 0,
     take: limit || JOBS_PER_PAGE,

@@ -3,6 +3,7 @@ import Header from '@/layouts/header';
 import { cn } from '@/lib/utils';
 import Providers from '@/providers/providers';
 import type { Metadata } from 'next';
+import NextTopLoader from 'nextjs-toploader';
 import './globals.css';
 import localFont from 'next/font/local';
 
@@ -18,6 +19,7 @@ const satoshi = localFont({
 export const metadata: Metadata = {
   title: '100xJobs',
   description: 'Get your dream job',
+  // icons: '/main.png',
 };
 
 export default async function RootLayout({
@@ -33,6 +35,8 @@ export default async function RootLayout({
           satoshi.variable
         )}
       >
+        {' '}
+        <NextTopLoader color="blue" showSpinner={false} />
         <Providers>
           <Header />
           <main className="grow grid p-4">{children}</main>

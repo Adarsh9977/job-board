@@ -307,28 +307,27 @@
 }
 
 /* Custom styles for Quill editor */
-.ql-toolbar.ql-snow {
+html.dark.ql-toolbar.ql-snow {
   border: none !important;
   background-color: #1f2937 !important;
   border-bottom: 1px solid #374151 !important;
 }
 
+.ql-toolbar.ql-snow {
+  border: none !important;
+  border-bottom: 1px solid #a9aaac !important;
+}
+
 .ql-container.ql-snow {
   border: none !important;
-  max-height: 56rem;
+  max-height: 30rem !important;
+  white-space: wrap !important;
+  width: '100%' !important;
   /* Set a fixed height */
-  overflow-y: hidden;
+  overflow-y: auto;
   /* Hide vertical overflow */
   overflow-x: auto;
   /* Allow horizontal scrolling */
-}
-
-.ql-editor {
-  min-height: 10px;
-  overflow-y: hidden;
-  /* Prevent height increase */
-  white-space: nowrap;
-  /* Ensure long lines don't wrap */
 }
 
 .ql-editor.ql-blank::before {
@@ -354,11 +353,10 @@
 
 /* Ensure long content does not wrap within the editor */
 .job-description-editor .ql-editor {
-
+  min-height: 6rem;
   white-space: nowrap !important;
-  overflow-x: hidden !important; /* Allow horizontal scrolling */
+  overflow-x: auto !important; /* Allow horizontal scrolling */
   overflow-y: hidden !important; /* Hide vertical overflow */
-
 }
 
 .pac-container {
@@ -398,4 +396,18 @@ html {
 .career-span {
   display: inline-block;
   transform: rotate(-2deg);
+}
+
+.react-tweet-theme {
+  height: 100%;
+}
+.tweet-container_article__0ERPK {
+  height: 100%;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

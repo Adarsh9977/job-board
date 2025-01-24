@@ -10,12 +10,13 @@ import {
 import { signOut } from 'next-auth/react';
 import Link from 'next/link';
 import Icon from './ui/icon';
-import { toast } from './ui/use-toast';
+import { useToast } from '@/components/ui/use-toast'; // Add this import
 import APP_PATHS from '@/config/path.config';
 import { useRouter } from 'next/navigation';
 
 export function ProfileMenu() {
   const router = useRouter();
+  const { toast } = useToast(); // Add this line
 
   const handleSignout = async () => {
     try {
@@ -31,7 +32,7 @@ export function ProfileMenu() {
       }
       toast({
         title: 'Logout successful!',
-        variant: 'success',
+        variant: 'default', // Change this to match your toaster's variants
       });
       const redirect = APP_PATHS.HOME;
       router.push(redirect);
@@ -42,6 +43,15 @@ export function ProfileMenu() {
       });
     }
   };
+
+  const handleManageProfile = () => {
+    toast({
+      title: 'Coming soon!',
+      description: 'This feature is not yet available.',
+      duration: 2000,
+    });
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -49,12 +59,16 @@ export function ProfileMenu() {
           variant="ghost"
           size="icon"
           className="focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 py-2 h-8 w-8 px-0"
+          aria-label="profile"
         >
           <Icon icon="profile" className="h-[1.2rem] w-[1.2rem]" />
           <span className="sr-only">Profile</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={handleManageProfile}>
+          Manage Profile
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href={'/create'}>Create Job</Link>
         </DropdownMenuItem>

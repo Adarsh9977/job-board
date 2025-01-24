@@ -42,7 +42,7 @@ export const options = {
           },
         });
 
-        if (!user)
+        if (!user || !user.password)
           throw new ErrorHandler(
             'Email or password is incorrect',
             'AUTHENTICATION_FAILED'
@@ -149,14 +149,12 @@ export const options = {
       return session;
     },
   },
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: 'jwt',
     maxAge: AUTH_TOKEN_EXPIRATION_TIME,
   },
   jwt: {
     maxAge: AUTH_TOKEN_EXPIRATION_TIME,
-  },
-  pages: {
-    signIn: '/signin',
   },
 } satisfies NextAuthOptions;

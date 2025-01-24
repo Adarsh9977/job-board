@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { WorkMode, EmployementType } from '@prisma/client';
+import { WorkMode, EmployementType, Currency } from '@prisma/client';
+import { SortByEnums } from '../constant/jobs.constant';
 
 export const JobPostSchema = z
   .object({
@@ -12,11 +13,14 @@ export const JobPostSchema = z
     type: z.nativeEnum(EmployementType, {
       message: 'Employment Type is Required',
     }),
+    currency: z.nativeEnum(Currency, {
+      message: 'Curreny is required',
+    }),
     skills: z.array(z.string()).optional(),
     category: z.string(),
     companyEmail: z.string().email('Invalid email').min(1, 'Email is required'),
     companyBio: z.string().min(1, 'Company Bio is required'),
-    companyLogo: z.string().url(),
+    companyLogo: z.string().min(1, 'Company Logo is Required'),
     hasSalaryRange: z.boolean().optional(),
     minSalary: z.coerce
       .number({ message: 'Min salary must be a number' })
@@ -35,6 +39,10 @@ export const JobPostSchema = z
       .number({ message: 'Max Experience must be a number' })
       .nonnegative()
       .optional(),
+    hasExpiryDate: z.boolean(),
+    expiryDate: z.coerce
+      .date({ message: 'Expiry date is required' })
+      .optional(),
     workMode: z.nativeEnum(WorkMode, {
       message: 'Work mode is required',
     }),
@@ -43,22 +51,65 @@ export const JobPostSchema = z
     if (data.hasSalaryRange) {
       if (!data.minSalary) {
         return ctx.addIssue({
-          message: 'minSalary is required ',
+          message: 'Minimum Salary is required ',
           path: ['minSalary'],
           code: z.ZodIssueCode.custom,
         });
       }
       if (!data.maxSalary) {
         return ctx.addIssue({
-          message: 'maxSalary is required ',
+          message: 'Maximum Salary is required ',
           path: ['maxSalary'],
           code: z.ZodIssueCode.custom,
         });
       }
       if (data.maxSalary <= data.minSalary) {
         return ctx.addIssue({
-          message: 'minSalary cannot be greater than or equal to maxSalary',
+          message:
+            'Minimum Salary cannot be greater than or equal to Maximum Salary',
           path: ['minSalary'],
+          code: z.ZodIssueCode.custom,
+        });
+      }
+    }
+
+    if (data.hasExpiryDate) {
+      if (!data.expiryDate) {
+        return ctx.addIssue({
+          message: 'Expiry date is required ',
+          path: ['expiryDate'],
+          code: z.ZodIssueCode.custom,
+        });
+      }
+      if (data.expiryDate <= new Date()) {
+        return ctx.addIssue({
+          message: 'Expiry date cannot be in the past',
+          path: ['expiryDate'],
+          code: z.ZodIssueCode.custom,
+        });
+      }
+    }
+
+    if (data.hasExperiencerange) {
+      if (!data.minExperience) {
+        return ctx.addIssue({
+          message: 'Minimum Experience is required ',
+          path: ['minExperience'],
+          code: z.ZodIssueCode.custom,
+        });
+      }
+      if (!data.maxExperience) {
+        return ctx.addIssue({
+          message: 'Maximum Experience is required ',
+          path: ['maxExperience'],
+          code: z.ZodIssueCode.custom,
+        });
+      }
+      if (data.minExperience >= data.maxExperience) {
+        return ctx.addIssue({
+          message:
+            'Minimum Experience cannot be greater than or equal to Maximum Experience',
+          path: ['minExperience'],
           code: z.ZodIssueCode.custom,
         });
       }
@@ -104,7 +155,7 @@ export const JobQuerySchema = z.object({
       }
       return val;
     }),
-  sortby: z.enum(['postedat_asc', 'postedat_desc']).default('postedat_desc'),
+  sortby: z.nativeEnum(SortByEnums).default(SortByEnums.POSTEDAT_ASC),
   page: z.coerce
     .number({ message: 'page must be a number' })
     .optional()
@@ -122,7 +173,17 @@ export const RecommendedJobSchema = z.object({
   category: z.string().min(1, 'Job category is required'),
 });
 
+export const deleteJobByIdSchema = z.object({
+  id: z.string().min(1, 'Job id is required'),
+});
+
+export const ApproveJobSchema = z.object({
+  id: z.string().min(1, 'Job id is required'),
+});
+
 export type JobByIdSchemaType = z.infer<typeof JobByIdSchema>;
 export type RecommendedJobSchemaType = z.infer<typeof RecommendedJobSchema>;
 export type JobPostSchemaType = z.infer<typeof JobPostSchema>;
 export type JobQuerySchemaType = z.infer<typeof JobQuerySchema>;
+export type DeleteJobByIdSchemaType = z.infer<typeof deleteJobByIdSchema>;
+export type ApproveJobSchemaType = z.infer<typeof ApproveJobSchema>;

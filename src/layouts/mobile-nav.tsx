@@ -28,9 +28,9 @@ import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { CompanyLogo } from './header';
-import spotifyLogo from '../../public/spotify.svg';
-import Image from 'next/image';
-import { ADMIN_ROLE } from '@/config/app.config';
+import { ADMIN_ROLE, HR_ROLE, USER_ROLE } from '@/config/app.config';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { getNameInitials } from '@/lib/utils';
 export function MobileNav() {
   const router = useRouter();
   const session = useSession();
@@ -63,7 +63,10 @@ export function MobileNav() {
 
   return (
     <Sheet>
-      <SheetTrigger className="border p-2.5 rounded-lg text-foreground/60 hover:dark:bg-[#191919] hover:bg-gray-100">
+      <SheetTrigger
+        className="border p-2.5 rounded-lg text-foreground/60 hover:dark:bg-[#191919] hover:bg-gray-100"
+        aria-label="mob-nav-menu"
+      >
         <Menu className="w-4 h-4" />
       </SheetTrigger>
       <SheetContent className="w-full">
@@ -77,33 +80,38 @@ export function MobileNav() {
           </SheetTitle>
           <ul className="flex flex-col gap-2 text-sm justify-items-start px-4 py-2">
             {session.status !== 'loading' && session.data?.user && (
-              <div className="w-full flex items-center">
-                {session.data?.user.role === ADMIN_ROLE ? (
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center border-none ouline-none dark:bg-[#0F172A] dark:text-white bg-slate-200">
+              <div
+                className="w-full flex items-center"
+                onClick={() => {
+                  router.push(APP_PATHS.PROFILE);
+                }}
+              >
+                {session.data?.user.role === ADMIN_ROLE ||
+                session.data?.user.role === HR_ROLE ? (
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center border-none outline-none dark:bg-[#0F172A] dark:text-white bg-slate-200">
                     <p>HS</p>
                   </div>
                 ) : (
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center border-none ouline-none">
-                    <Image
-                      width={400}
-                      height={400}
-                      className="object-cover w-full h-full"
-                      src={spotifyLogo}
-                      alt="company-logo"
-                    />
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center border-none outline-none">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage
+                        src={
+                          session.data.user.image ? session.data.user.image : ''
+                        }
+                      />
+                      <AvatarFallback>
+                        {getNameInitials(session.data.user.name)}
+                      </AvatarFallback>
+                    </Avatar>
                   </div>
                 )}
                 <div className="flex flex-col items-start justify-center px-2 mt-2">
                   <p className="font-semibold text-lg dark:text-[#F8FAFC] text-[#020817]">
-                    {session.data?.user.role === ADMIN_ROLE
-                      ? 'Harkirat Singh'
-                      : 'User'}
+                    {session.data?.user.name}
                   </p>
                   <div className="flex items-center text-[#64748B] dark:text-[#94A3B8]">
                     <p className="py-1 text-sm  font-medium">
-                      {session.data?.user.role === ADMIN_ROLE
-                        ? 'admin@gmail.com'
-                        : 'work@spotify.com'}
+                      {session.data?.user.email}
                     </p>
                   </div>
                 </div>
@@ -115,22 +123,23 @@ export function MobileNav() {
                   <Item {...item} key={item.id} />
                 ))}
 
-                <Link href={'/create'} className="">
+                <Link href={'/signin'} className="">
                   <SheetClose className="w-full">
                     <div className="w-full rounded-lg p-2 my-2 bg-[#3259E8] hover:bg-[#3e63e9] text-white font-medium ">
-                      Post a job
+                      Login
                     </div>
                   </SheetClose>
                 </Link>
               </>
             )}
-            {session.status !== 'loading' && session.data?.user && (
-              <>
-                {userNavbar.map((item) => (
-                  <Item {...item} key={item.id} />
-                ))}
-              </>
-            )}
+            {session.status !== 'loading' &&
+              session.data?.user.role === USER_ROLE && (
+                <>
+                  {userNavbar.map((item) => (
+                    <Item {...item} key={item.id} />
+                  ))}
+                </>
+              )}
             {session.status !== 'loading' &&
               session.data?.user.role === ADMIN_ROLE && (
                 <>
@@ -145,6 +154,7 @@ export function MobileNav() {
               <button
                 onClick={handleSignout}
                 className="text-[#DD503F] flex items-center justify-start font-medium text-lg"
+                aria-label="logout"
               >
                 <LogOut className="w-4 h-4" />
                 <p className="mx-1">Logout</p>
@@ -165,7 +175,7 @@ const Item = ({
 }: {
   path: string;
   label: string;
-  roleRequired?: string;
+  roleRequired?: string[];
   isPrivate?: boolean;
 }) => {
   const session = useSession();
@@ -176,7 +186,12 @@ const Item = ({
   if (!session.data?.user && isPrivate) {
     return;
   }
-  if (session && roleRequired && session.data?.user.role !== roleRequired)
+  if (
+    session &&
+    roleRequired &&
+    session.data?.user.role &&
+    !roleRequired.includes(session.data?.user.role)
+  )
     return;
   return (
     <li className="my-1 dark:hover:bg-slate-800 hover:bg-slate-50 p-2 rounded-lg">

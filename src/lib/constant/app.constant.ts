@@ -12,33 +12,39 @@ export const GITHUB_REPO = 'https://github.com/code100x/job-board';
 
 export const nonUserNavbar = [
   { id: 1, label: 'Explore jobs', path: APP_PATHS.JOBS },
-
-  { id: 2, label: 'Pricing', path: '/' },
-  { id: 3, label: 'Contact us', path: APP_PATHS.TESTIMONIALS },
+  { id: 2, label: 'Contact us', path: APP_PATHS.CONTACT_US },
 ];
 
 export const userNavbar = [
-  {
-    id: 1,
-    label: 'Manage Jobs',
-    path: APP_PATHS.MANAGE_JOBS,
-  },
-  { id: 2, label: 'Payment History', path: '/' },
-  { id: 4, label: 'Post a Job', path: '/create' },
-  { id: 3, label: 'Help', path: '/' },
+  { id: 1, label: 'Explore jobs', path: APP_PATHS.JOBS },
+  { id: 2, label: 'Contact us', path: APP_PATHS.CONTACT_US },
 ];
 export const adminNavbar = [
   {
     id: 1,
     label: 'Manage Jobs',
     path: APP_PATHS.MANAGE_JOBS,
-    roleRequired: 'ADMIN',
+    roleRequired: ['ADMIN', 'HR'],
     icon: PackageSearch,
   },
-  { id: 2, label: 'Manage Recruiters', path: '/' },
-  { id: 3, label: 'Payment History', path: '/' },
+  {
+    id: 2,
+    label: 'Manage Recruiters',
+    path: APP_PATHS.MANAGE_RECRUITERS,
+    roleRequired: ['ADMIN'],
+    icon: PackageSearch,
+  },
 ];
-
+export const userProfileNavbar = [
+  { id: 1, label: 'My Account', path: APP_PATHS.PROFILE },
+  { id: 2, label: 'Edit Profile', path: APP_PATHS.EDIT_PROFILE },
+  { id: 3, label: 'Saved Jobs', path: APP_PATHS.BOOKMARK },
+  { id: 4, label: 'Account Settings', path: APP_PATHS.ACCOUNT_SETTINGS },
+  { id: 4, label: 'Experience', path: APP_PATHS.EXPERIENCE },
+  { id: 5, label: 'Projects', path: APP_PATHS.PROJECTS },
+  { id: 6, label: 'Skills', path: APP_PATHS.SKILLS },
+  { id: 7, label: 'Resume', path: APP_PATHS.RESUME },
+];
 export const socials: {
   href: string;
   icon: IconProps['icon'];

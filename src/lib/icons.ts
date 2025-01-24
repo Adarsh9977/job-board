@@ -5,6 +5,8 @@ import {
   FaLinkedin,
   FaTelegramPlane,
   FaYoutube,
+  FaSpinner,
+  FaDiscord,
 } from 'react-icons/fa';
 import {
   ArrowRight,
@@ -12,6 +14,7 @@ import {
   Menu,
   Sparkles,
   Copyright,
+  ArchiveRestore,
   Sun,
   Moon,
   type Icon as LucideIconType,
@@ -22,10 +25,11 @@ import {
   DollarSign,
   BookText,
   User,
+  Trash2,
   LogOut,
   SlidersHorizontal,
+  AlertCircle,
 } from 'lucide-react';
-
 const icons = {
   sparcle: Sparkles,
   rightarrow: ArrowRight,
@@ -35,10 +39,14 @@ const icons = {
   youtube: FaYoutube,
   linkedin: FaLinkedin,
   github: FaGithub,
+  discord: FaDiscord,
   instagram: FaInstagram,
   telergam: FaTelegramPlane,
+  loading: FaSpinner,
   copyright: Copyright,
   sun: Sun,
+  ArchiveRestore: ArchiveRestore,
+  trash: Trash2,
   moon: Moon,
   check: Check,
   'chevron-right': ChevronRight,
@@ -49,6 +57,7 @@ const icons = {
   profile: User,
   logout: LogOut,
   filter: SlidersHorizontal,
+  alert: AlertCircle,
 };
 export type IconType = typeof LucideIconType;
 export default icons;
